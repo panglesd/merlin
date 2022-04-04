@@ -636,16 +636,6 @@ argument (lookup appropriate binary, setup logging, pass global settings)"
 ;; ERROR BUFFER ;;
 ;;;;;;;;;;;;;;;;;;
 
-(defun merlin--error-is-short (text)
-  (let ((count 0)
-        (pos   0))
-    (save-match-data
-      (while (and (<= count 8)
-                  (string-match "\n" text pos))
-        (setq pos (match-end 0))
-        (setq count (1+ count))))
-    (<= count 8)))
-
 (defvar merlin-error-buffer-map
   (let ((map (make-sparse-keymap)))
     (set-keymap-parent map special-mode-map)

@@ -63,6 +63,9 @@ module Tie_breaker : sig
 
   (** Tie-break by preferring expression over other nodes *)
   val prefer_expression : t
+
+  (** Tie-break by preferring record_fields over other nodes *)
+  val prefer_record_field : t
 end
 
 (** The deepest context inside or before the node, for instance, navigating

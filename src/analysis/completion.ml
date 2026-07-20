@@ -707,6 +707,7 @@ let branch_complete buffer ?get_doc ?target_type ?kinds ~keywords prefix =
       let is_label =
         match lbl.lbl_all with
         | [||] ->
+          log ~title:"branch_complete" "Empty Record due to all being empty";
           begin match
             let ty =
               match parent with
@@ -731,15 +732,24 @@ let branch_complete buffer ?get_doc ?target_type ?kinds ~keywords prefix =
                       let lbl_res = Subst.type_expr Subst.identity lbl_res in
                       let lbl_arg = Subst.type_expr Subst.identity lbl_arg in
                       { lbl with lbl_res; lbl_arg }
-                    with _ -> lbl)
+                    with _ ->
+                      log ~title:"branch_complete" "Failure3";
+                      lbl)
               in
               `Description labels
             with _ -> (
               match decl.Types.type_kind with
               | Types.Type_record (lbls, _) -> `Declaration (ty, lbls)
-              | _ -> `Maybe)
+              | _ ->
+                log ~title:"branch_complete" "Failure2";
+                `Maybe)
             end
-          | _ | (exception _) -> `Maybe
+          | _, Has_no_typedecl | _, May_have_typedecl ->
+            log ~title:"branch_complete" "Definitely in a 'synthetic' variant";
+            `Maybe
+          | exception _ ->
+            log ~title:"branch_complete" "Failure1'";
+            `Maybe
           end
         | lbls -> `Description (Array.to_list lbls)
       in

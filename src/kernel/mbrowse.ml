@@ -111,6 +111,13 @@ module Tie_breaker = struct
     | Expression _, _ -> Some Prefer_first
     | _, Expression _ -> Some Prefer_second
     | _ -> None
+
+  let prefer_record_field node1 node2 : tie_break option =
+    match (node1, node2) with
+    | Record_field _, Record_field _ -> None
+    | Record_field _, _ -> Some Prefer_first
+    | _, Record_field _ -> Some Prefer_second
+    | _ -> None
 end
 
 let compare_locations ?tie_break pos l1 l2 =

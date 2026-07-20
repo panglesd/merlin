@@ -78,7 +78,9 @@ let path_and_loc_from_label desc env =
   | Tconstr (path, _, _) ->
     let typ_decl = Env.find_type path env in
     (path, typ_decl.Types.type_loc)
-  | _ -> assert false
+  | _ ->
+    (* Possibly, recovered records don't have a record type associated... *)
+    raise Not_found
 
 let by_longident (nss : Namespace.inferred list) ident env =
   let open Shape.Sig_component_kind in

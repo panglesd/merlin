@@ -87,6 +87,33 @@ Test 1.3 : FIXME ? int option
     "notifications": []
   }
 
+Test 1.4 : FIXME we should filter out already used cases (issue #1384)
+
+  $ $MERLIN single case-analysis -start 4:4 -end 4:5 -filename refine_pattern.ml <<EOF
+  > let _ =
+  >   match (None : unit option) with
+  >   | None -> ()
+  >   | _ -> ()
+  > EOF
+  {
+    "class": "return",
+    "value": [
+      {
+        "start": {
+          "line": 4,
+          "col": 4
+        },
+        "end": {
+          "line": 4,
+          "col": 5
+        }
+      },
+      "Some
+  _"
+    ],
+    "notifications": []
+  }
+
 #############
 ## RECORDS ##
 #############

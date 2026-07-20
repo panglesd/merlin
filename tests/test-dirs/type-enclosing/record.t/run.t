@@ -33,6 +33,18 @@
     {
       "start": {
         "line": 6,
+        "col": 10
+      },
+      "end": {
+        "line": 6,
+        "col": 11
+      },
+      "type": "'a",
+      "tail": "no"
+    },
+    {
+      "start": {
+        "line": 6,
         "col": 8
       },
       "end": {

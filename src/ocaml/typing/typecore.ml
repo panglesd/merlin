@@ -4440,10 +4440,46 @@ and type_expect_
     with exn ->
       raise_error exn;
       set_levels saved_levels;
+      let dummy_label =
+        { lbl_name = ""; lbl_res = none; lbl_arg = none; lbl_mut = Immutable;
+          lbl_pos = (-1); lbl_all = [||]; lbl_repres = Record_regular;
+          lbl_private = Public;
+          lbl_atomic = Nonatomic;
+          lbl_loc = Location.none;
+          lbl_attributes = [];
+          lbl_uid = Uid.internal_not_actually_unique;
+        } in
+      let lbl_all = Array.make (* (List.length lid_sexp_list) *) 0 dummy_label in
+      let synthetic_field _i (lid, sexp') = 
+        let lbl_name = Longident.head lid.txt in
+        let exp' = type_exp env sexp' in
+        let lbl = { lbl_name;                   (* Short name *)
+              lbl_res = newvar ();                 (* Type of the result (the record) *)
+              lbl_arg = newvar ();                 (* Type of the argument
+                                                      (the field value) *)
+              lbl_mut = Immutable;              (* Is this a mutable field? *)
+              lbl_atomic = Nonatomic;            (* Is this an atomic field? *)
+              lbl_pos = 0;                       (* Position in block *)
+              lbl_all;   (* TODO: use array mutability to handle this *)
+              lbl_repres = Record_regular;  (* Representation for this record *)
+              lbl_private = Public;          (* Read-only field? *)
+              lbl_loc = lid.loc;
+              lbl_attributes = [];
+              lbl_uid = Uid.internal_not_actually_unique;
+            } in
+        let field = (
+            lbl,
+            Typedtree.Overridden (lid, exp'))
+        in
+        (* Array.set lbl_all i lbl; *)
+        field
+      in
+      let fields = List.mapi synthetic_field lid_sexp_list |> Array.of_list in
+      let opt_exp = None in (* TODO *)
       re {
         exp_desc = Texp_record {
-            fields = [||]; representation = Record_regular;
-            extended_expression = None;
+            fields; representation = Record_regular;
+            extended_expression = opt_exp;
           };
         exp_loc = loc; exp_extra = [];
         exp_type = instance ty_expected;

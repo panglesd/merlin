@@ -23,8 +23,16 @@ available:
 Try completing field names inside record expressions (where either the scope or
 the type should be known):
 
-  $ $MERLIN single complete-prefix -position 5:17 -prefix T.f -doc n \
+  $ $MERLIN single complete-prefix -log-file - -log-section "Completion" -position 5:17 -prefix T.f -doc n \
   > -filename record.ml < record.ml
+  # 0.03 Completion - branch_complete
+  Leaf node: record_field
+  # 0.03 Completion - branch_complete
+  Empty Record due to all being empty
+  # 0.03 Completion - branch_complete
+  Failure1
+  # 0.03 Completion - find
+  prefix = f
   {
     "class": "return",
     "value": {
@@ -43,27 +51,35 @@ the type should be known):
   }
 
 
-  $ $MERLIN single complete-prefix -position 7:18 -prefix foo -doc n \
+  $ $MERLIN single complete-prefix -log-file - -log-section "Completion" -position 7:18 -prefix foo -doc n \
   > -filename record.ml < record.ml
+  # 0.03 Completion - branch_complete
+  Leaf node: record_field
+  # 0.03 Completion - branch_complete
+  Empty Record due to all being empty
+  # 0.03 Completion - branch_complete
+  Failure1
+  # 0.03 Completion - find
+  prefix = foo
   {
     "class": "return",
     "value": {
-      "entries": [
-        {
-          "name": "foobar",
-          "kind": "Label",
-          "desc": "T.t -> int",
-          "info": "",
-          "deprecated": false
-        }
-      ],
+      "entries": [],
       "context": null
     },
     "notifications": []
   }
 
-  $ $MERLIN single complete-prefix -position 11:31 -prefix tes -doc n \
+  $ $MERLIN single complete-prefix -log-file - -log-section "Completion" -position 11:31 -prefix tes -doc n \
   > -filename record.ml < record.ml
+  # 0.03 Completion - branch_complete
+  Leaf node: record_field
+  # 0.03 Completion - branch_complete
+  Empty Record due to all being empty
+  # 0.03 Completion - branch_complete
+  Failure1
+  # 0.03 Completion - find
+  prefix = tes
   {
     "class": "return",
     "value": {

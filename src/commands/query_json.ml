@@ -336,7 +336,8 @@ let rec json_of_outline outline =
         location;
         selection;
         children;
-        deprecated
+        deprecated;
+        exposed = _
       } =
     with_location location
       [ ("name", `String outline_name);

@@ -718,7 +718,8 @@ let dispatch pipeline (type a) : a Query_protocol.t -> a = function
   | Outline ->
     let typer = Mpipeline.typer_result pipeline in
     let browse = Mbrowse.of_typedtree (Mtyper.get_typedtree typer) in
-    Outline.get [ Browse_tree.of_browse browse ]
+    let config = Mpipeline.final_config pipeline in
+    Outline.get ~config [ Browse_tree.of_browse browse ]
   | Shape pos ->
     let typer = Mpipeline.typer_result pipeline in
     let browse = Mbrowse.of_typedtree (Mtyper.get_typedtree typer) in

@@ -239,29 +239,38 @@ let get_external_locs ~(config : Mconfig.t) ~current_buffer_path uid :
           in
           (occurrences, Stat_check.get_outdated_files stats)))
 
-let lookup_related_uids_in_indexes ~(config : Mconfig.t) uid =
-  let title = "lookup_related_uids_in_indexes" in
+type index_uid_tbl =
+  Index_format.Union_find.store
+  * Index_format.Union_find.t Index_format.Uid_map.t
+
+let get_index_uid_tbl ~(config : Mconfig.t) title =
   let open Index_format in
-  let store, related_uids =
-    List.fold_left
-      ~init:(Uid_map.empty (), Uid_map.empty ())
-      config.merlin.index_files
-      ~f:(fun (store, acc) index_file ->
-        try
-          let index = Index_cache.read index_file in
-          Union_find.merge_union store index.related_uids
-            index.related_uids_store acc
-        with
-        | Index_format.Not_an_index _
-        | Sys_error _
-        | Granular_marshal.Outdated_store _
-        ->
-          log ~title "Could not load index %s" index_file;
-          (store, acc))
-  in
+  List.fold_left
+    ~init:(Uid_map.empty (), Uid_map.empty ())
+    config.merlin.index_files
+    ~f:(fun (store, acc) index_file ->
+      try
+        let index = Index_cache.read index_file in
+        Union_find.merge_union store index.related_uids index.related_uids_store
+          acc
+      with
+      | Index_format.Not_an_index _
+      | Sys_error _
+      | Granular_marshal.Outdated_store _
+      ->
+        log ~title "Could not load index %s" index_file;
+        (store, acc))
+
+let find_in_index_uid_tbl (store, related_uids) uid =
+  let open Index_format in
   Uid_map.find_opt uid related_uids
   |> Option.value_map ~default:[] ~f:(fun x ->
       x |> Union_find.get store |> Uid_set.elements)
+
+let lookup_related_uids_in_indexes ~(config : Mconfig.t) uid =
+  let title = "lookup_related_uids_in_indexes" in
+  let index_uid_tbl = get_index_uid_tbl ~config title in
+  find_in_index_uid_tbl index_uid_tbl uid
 
 let find_linked_uids ~config ~scope ~name uid =
   let title = "find_linked_uids" in

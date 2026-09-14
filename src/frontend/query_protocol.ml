@@ -92,6 +92,7 @@ and item =
       | `Method ];
     outline_type : string option;
     deprecated : bool;
+    exposed : bool;
     location : Location.t;
     selection : Location.t;
     children : outline

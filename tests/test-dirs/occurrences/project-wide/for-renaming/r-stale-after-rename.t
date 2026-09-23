@@ -14,7 +14,7 @@ index's stat-check cannot detect the modification: only the name check can.
 
   $ cat >lib.ml <<'EOF'
   > let foo = 42
-  > let _ = foo
+  > let _ = foo + 1
   > EOF
 
   $ cat >main.ml <<'EOF'
@@ -50,23 +50,26 @@ the definition and all usages, show_incomplete does not return anything
 
 Apply the edits of renaming [foo] to [bar], without rebuilding:
   $ cat >lib.mli <<'EOF'
-  > val bar : int
+  > val foo : int
   > EOF
 
   $ cat >lib.ml <<'EOF'
-  > let bar = 42
-  > let _ = bar
+  > let foo = 42
+  > let _ = 1 + foo
   > EOF
 
   $ cat >main.ml <<'EOF'
-  > let () = print_int Lib.bar
+  > let () = print_int Lib.foo
   > EOF
 
-Only the declaration of the current buffer is found
+FIXME: Stale locations are found!
   $ locations
   $TESTCASE_ROOT/lib.mli:1:4
+  $TESTCASE_ROOT/lib.ml:1:4
+  $TESTCASE_ROOT/lib.ml:2:8
+  $TESTCASE_ROOT/main.ml:1:23
   $ show_incomplete
-  Occurrences may be incomplete: some source files are out-of-sync with the index: lib.mli, lib.ml
+  [1]
 
 After rebuilding, renaming from the interface works again:
   $ ocamlc -bin-annot -bin-annot-occurrences -c lib.mli lib.ml main.ml
@@ -74,7 +77,7 @@ After rebuilding, renaming from the interface works again:
   $ locations
   $TESTCASE_ROOT/lib.mli:1:4
   $TESTCASE_ROOT/lib.ml:1:4
-  $TESTCASE_ROOT/lib.ml:2:8
+  $TESTCASE_ROOT/lib.ml:2:12
   $TESTCASE_ROOT/main.ml:1:23
   $ show_incomplete
   [1]

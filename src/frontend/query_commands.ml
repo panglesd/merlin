@@ -792,7 +792,7 @@ let dispatch pipeline (type a) : a Query_protocol.t -> a = function
       if n <> 0 then n else Lexing.compare_pos (error_end e1) (error_end e2)
     in
     let errors =
-      List.sort_uniq ~cmp
+      List.sort ~cmp
         ((if lexing then lexer_errors else [])
         @ (if parsing then parser_errors else [])
         @ if typing then typer_errors else [])

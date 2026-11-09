@@ -533,6 +533,20 @@ make sure we also handle that correctly in structures:
         "sub": [],
         "valid": true,
         "message": "Unbound type constructor toto"
+      },
+      {
+        "start": {
+          "line": 3,
+          "col": 17
+        },
+        "end": {
+          "line": 3,
+          "col": 21
+        },
+        "type": "typer",
+        "sub": [],
+        "valid": true,
+        "message": "Unbound type constructor toto"
       }
     ],
     "notifications": []
